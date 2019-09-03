@@ -1,0 +1,15 @@
+[package]
+name = "wagyu_bolt"
+version = "0.1.0"
+authors = ["Bolt Labs, Inc <info@boltlabs.io>"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/boltlabs-inc/wagyu_bolt"
+license = "MIT License"
+
+[dependencies]
+wagyu-ethereum = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
+wagyu-zcash = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/zcash-transactions" }
+
+# [lib]
+# crate-type = ["lib", "cdylib"]
