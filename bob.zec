@@ -1,0 +1,9 @@
+[
+  {
+    "private_key": "cV7rteeujt7FxDEbAm86sppwanipexAzhiukK4jvBgX2vJFXrhm1",
+    "public_key": "03afa7a735f4c3102164e8d787141727a1148d034abad16ae72a2aa77d2e2b30d2",
+    "address": "tmVyhzSSHdAkpozEkgAPzRy18KfwDDwrQcL",
+    "format": "p2pkh",
+    "network": "testnet"
+  }
+]

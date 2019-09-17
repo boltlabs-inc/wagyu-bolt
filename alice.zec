@@ -1,0 +1,11 @@
+[
+  {
+    "private_key": "secret-spending-key-test1g542rlf8jgg3j485m04lxs55kaw9p80mmxp5kqjz7g8wuuc3k4vq6x60d4",
+    "public_key": "zviewtestsapling1z2tehpg7ddkazj9t7d5c8nvw28wwkj2r9qvpjnjt5t3kyup35tx4evk52g7z8pj27ej7a86us73f7lk2qu97pr8nfw96jy7ewlk5xdw5h2mzvf8f34fy40kektj9hxksj8dgwrf67urea0rwx0pee3xxtvgxqf7d",
+    "address": "ztestsapling19l8lnpa7nj79fnn6whmenkr30tvd8h39e840r6qjgf88x7dcw8czmfn7vlr5tdtq80qdzfsxzld",
+    "format": "sapling",
+    "diversifier": "2fcff987be9cbc54ce7a75",
+    "network": "testnet"
+  }
+]
+
