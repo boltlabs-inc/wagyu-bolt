@@ -56,18 +56,11 @@ fn main() {
         sig_hash_code: SigHashCode::SIGHASH_ALL,
     };
 
-    // to sign tx
-    let index = 0;
-
     // default params
-    let header = 2147483652;
-    let version_group_id = 0x892F2085;
+    let version = "sapling";
     let lock_time = 0;
     let expiry_height = 499999999;
-    let mut transaction = ZcashTransaction::<Testnet>::build_raw_transaction(header, version_group_id, lock_time, expiry_height).unwrap();
-
-    println!("Header = {}", transaction.header);
-    println!("Group ID = {}", transaction.version_group_id);
+    let mut transaction = ZcashTransaction::<Testnet>::build_raw_transaction(version, lock_time, expiry_height).unwrap();
 
     // let's add shielded spend
 //    let mut cmu = [0u8; 32];
@@ -113,9 +106,14 @@ fn main() {
     transaction.add_transparent_output(output_address, output_amount).unwrap();
 
     // let's sign the transaction
-    transaction.sign_raw_transaction(private_key.clone(), index).unwrap();
+    transaction.sign_raw_transaction(private_key.clone(), input.index as usize).unwrap();
 
     let signed_transaction = hex::encode(transaction.serialize_transaction(false).unwrap());
+
+    println!("Header = {}", transaction.header);
+    println!("Group ID = {}", transaction.version_group_id);
+
+    // show inputs & outputs
 
     println!("signed tx: {:?}", signed_transaction);
 }
