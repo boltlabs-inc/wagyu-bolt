@@ -4,8 +4,8 @@ extern crate wagyu_model;
 extern crate hex;
 
 use zcash::network::Testnet;
-use zcash::address::{Format, ZcashAddress};
-use zcash::{ZcashTransaction, ZcashPrivateKey, SigHashCode};
+use zcash::address::ZcashAddress;
+use zcash::{ZcashTransaction, ZcashPrivateKey, SignatureHash};
 
 use std::str::FromStr;
 //use zcash_primitives::merkle_tree::CommitmentTreeWitness;
@@ -20,7 +20,7 @@ pub struct TransparentInput {
     pub script_pub_key: Option<&'static str>,
     pub utxo_amount: Option<u64>,
     pub sequence: Option<[u8; 4]>,
-    pub sig_hash_code: SigHashCode,
+    pub sig_hash_code: SignatureHash,
 }
 
 pub struct SaplingInput {
@@ -53,7 +53,7 @@ fn main() {
         script_pub_key: None,
         utxo_amount: None,
         sequence: None,
-        sig_hash_code: SigHashCode::SIGHASH_ALL,
+        sig_hash_code: SignatureHash::SIGHASH_ALL,
     };
 
     // default params
