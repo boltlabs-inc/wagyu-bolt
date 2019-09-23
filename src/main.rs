@@ -5,11 +5,15 @@ extern crate hex;
 
 use zcash::network::Testnet;
 use zcash::address::ZcashAddress;
-use zcash::{ZcashTransaction, ZcashPrivateKey, SignatureHash};
+use zcash::{ZcashTransaction, ZcashTransactionParameters, ZcashPrivateKey, SignatureHash};
+use wagyu_model::transaction::Transaction;
 
 use std::str::FromStr;
 //use zcash_primitives::merkle_tree::CommitmentTreeWitness;
 use pairing::bls12_381::{Bls12, Fr, FrRepr};
+use std::fmt;
+
+const SATOSHI: u64 = 100000000;
 
 pub struct TransparentInput {
     pub private_key: &'static str,
@@ -32,6 +36,32 @@ pub struct SaplingInput {
     pub witness: Option<&'static str>,
 }
 
+impl fmt::Display for TransparentInput {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "<= Transaprent Input =>\n");
+        write!(f, "private_key => {}\n", &self.private_key);
+        write!(f, "address => {}\n", &self.address);
+        write!(f, "tx id => {}\n", &self.transaction_id);
+        write!(f, "index => {}\n", &self.index);
+        if self.redeem_script.is_some() {
+            write!(f, "redeem script => '{}'\n", &self.redeem_script.unwrap());
+        }
+        if self.script_pub_key.is_some() {
+            write!(f, "script pubkey => '{}'\n", &self.script_pub_key.unwrap());
+        }
+        if self.utxo_amount.is_some() {
+            let amount = self.utxo_amount.unwrap() / SATOSHI;
+            write!(f, "utxo amount => {}\n", &amount);
+        }
+        if self.sequence.is_some() {
+            write!(f, "sequence => {:?}\n", &self.sequence.unwrap());
+        }
+        write!(f, "sig hash => {}\n", &self.sig_hash_code);
+        write!(f, "<= Transaprent Input =>\n");
+        Ok(())
+    }
+}
+
 fn main() {
 
     // get the inputs
@@ -51,16 +81,19 @@ fn main() {
         index: 0,
         redeem_script: Some(""),
         script_pub_key: None,
-        utxo_amount: None,
+        utxo_amount: Some(10000000000),
         sequence: None,
         sig_hash_code: SignatureHash::SIGHASH_ALL,
     };
+
+    println!("{}", &input);
 
     // default params
     let version = "sapling";
     let lock_time = 0;
     let expiry_height = 499999999;
-    let mut transaction = ZcashTransaction::<Testnet>::build_raw_transaction(version, lock_time, expiry_height).unwrap();
+    let parameters = ZcashTransactionParameters::<Testnet>::new(version, lock_time, expiry_height).unwrap();
+    let mut transaction = ZcashTransaction::<Testnet>::new(&parameters).unwrap();
 
     // let's add shielded spend
 //    let mut cmu = [0u8; 32];
@@ -89,7 +122,7 @@ fn main() {
     let script_pub_key = input.script_pub_key.map(|script| hex::decode(script).unwrap());
     let sequence = input.sequence.map(|seq| seq.to_vec());
 
-    transaction.add_transparent_input(
+    transaction.parameters = transaction.parameters.add_transparent_input(
             address,
             transaction_id,
             input.index,
@@ -101,19 +134,18 @@ fn main() {
     ).unwrap();
 
     // let's add transparent output
-    let output_address = "tmVyhzSSHdAkpozEkgAPzRy18KfwDDwrQcL";
+    let output_address = ZcashAddress::<Testnet>::from_str("tmVyhzSSHdAkpozEkgAPzRy18KfwDDwrQcL").unwrap();
     let output_amount = 499960000; // in taz
-    transaction.add_transparent_output(output_address, output_amount).unwrap();
-
-    // let's sign the transaction
-    transaction.sign_raw_transaction(private_key.clone(), input.index as usize).unwrap();
-
-    let signed_transaction = hex::encode(transaction.serialize_transaction(false).unwrap());
-
-    println!("Header = {}", transaction.header);
-    println!("Group ID = {}", transaction.version_group_id);
+    transaction.parameters = transaction.parameters.add_transparent_output(&output_address, output_amount).unwrap();
 
     // show inputs & outputs
+    println!("tx params = {:?}", &transaction.parameters);
 
-    println!("signed tx: {:?}", signed_transaction);
+    // let's sign the transaction
+    transaction.sign_raw_transaction(private_key.clone(), 0).unwrap();
+
+    let signed_transaction = hex::encode(transaction.to_transaction_bytes().unwrap());
+
+    // raw signed transaction
+    println!("signed tx = {:?}", signed_transaction);
 }

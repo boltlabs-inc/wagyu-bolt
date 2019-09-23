@@ -12,7 +12,7 @@ hex = "0.3.2"
 serde = { version = "1.0", features = ["derive"] }
 ff = { git = "https://github.com/boltlabs-inc/ff", branch = "master" }
 pairing = { git = "https://github.com/boltlabs-inc/pairing", branch = "master", features = ["serde"] }
-wagyu-model = "0.6.1"
+wagyu-model = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
 wagyu-ethereum = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
 wagyu-zcash = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
 
