@@ -15,6 +15,7 @@ pairing = { git = "https://github.com/boltlabs-inc/pairing", branch = "master", 
 wagyu-model = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
 wagyu-ethereum = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
 wagyu-zcash = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
+wagyu-bitcoin = { git = "https://github.com/ArgusHQ/wagyu", branch = "feature/transactions" }
 
-# [lib]
-# crate-type = ["lib", "cdylib"]
+[lib]
+crate-type = ["lib", "cdylib"]
