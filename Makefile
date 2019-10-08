@@ -4,6 +4,7 @@ all:
 	export RUSTFLAGS=-Awarnings
 	cargo +nightly build
 	cargo +nightly test
+	cargo +nightly run
 
 release:
 	cargo +nightly build --release

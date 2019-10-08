@@ -96,7 +96,7 @@ pub mod transactions {
 
         let transaction_id = hex::decode(input.transaction_id).unwrap();
         //let redeem_script = input.redeem_script.map(|script| hex::decode(script).unwrap());
-        let address_format = BitcoinFormat::P2PKH;
+        // let address_format = BitcoinFormat::P2PKH;
 
         let redeem_script = match (input.redeem_script, address_format.clone()) {
             (Some(script), _) => Some(hex::decode(script).unwrap()),
@@ -194,8 +194,9 @@ pub mod transactions {
                                                                                output_amount).unwrap();
 
         // let's sign the transaction
-        transaction.sign_raw_transaction(private_key.clone(), 0).unwrap();
+        //transaction = transaction.sign_raw_transaction(private_key.clone(), 0).unwrap();
 
+        transaction = transaction.sign(&private_key).unwrap();
         let signed_transaction = hex::encode(transaction.to_transaction_bytes().unwrap());
 
         return signed_transaction;
@@ -263,7 +264,7 @@ mod tests {
         };
 
         let fee = 100; // 0.001
-        let output = Output { address: "1cMh228HTCiwS8ZsaakH8A8wze1JR5ZsP", address_format: "P2PKH", amount: 12000 - fee };
+        let output = Output { address: "1Fyxts6r24DpEieygQiNnWxUdb18ANa5p7", address_format: "P2PKH", amount: 199996600 - fee };
         let signed_escrow_tx = transactions::createBitcoinEscrowTx::<BitcoinTestnet>(&config, &input, &output);
 
         println!("signed escrow tx: {}", &signed_escrow_tx);
