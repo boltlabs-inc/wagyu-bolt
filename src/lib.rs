@@ -7,11 +7,11 @@ extern crate hex;
 pub mod transactions {
 
     use bitcoin::network::BitcoinNetwork;
-    use bitcoin::{BitcoinFormat, BitcoinTransaction, BitcoinTransactionInput, BitcoinTransactionOutput, BitcoinTransactionParameters, BitcoinPrivateKey};
+    use bitcoin::{BitcoinFormat, BitcoinTransaction, BitcoinTransactionInput, BitcoinTransactionOutput, BitcoinTransactionParameters, BitcoinPrivateKey, BitcoinAmount};
     use bitcoin::address::BitcoinAddress;
     use zcash::network::ZcashNetwork;
     use zcash::address::ZcashAddress;
-    use zcash::{ZcashFormat, ZcashTransaction, ZcashTransactionParameters, ZcashPrivateKey};
+    use zcash::{ZcashFormat, ZcashTransaction, ZcashTransactionParameters, ZcashPrivateKey, ZcashAmount};
     use wagyu_model::transaction::Transaction;
     pub use bitcoin::SignatureHash as BitcoinSigHash;
     pub use zcash::SignatureHash as ZcashSigHash;
@@ -23,7 +23,7 @@ pub mod transactions {
 
     use std::fmt;
     use std::str::FromStr;
-    const SATOSHI: u64 = 100000000;
+    const SATOSHI: i64 = 100000000;
 
     pub struct Input {
         pub private_key: &'static str,
@@ -32,14 +32,14 @@ pub mod transactions {
         pub index: u32,
         pub redeem_script: Option<&'static str>,
         pub script_pub_key: Option<&'static str>,
-        pub utxo_amount: Option<u64>,
+        pub utxo_amount: Option<i64>,
         pub sequence: Option<[u8; 4]>
     }
 
     pub struct Output {
         pub address: &'static str,
         pub address_format: &'static str,
-        pub amount: u64
+        pub amount: i64
     }
 
     pub struct SaplingInput {
@@ -117,7 +117,7 @@ pub mod transactions {
             &address,
             transaction_id,
             input.index,
-            input.utxo_amount.unwrap(),
+            BitcoinAmount(input.utxo_amount.unwrap()),
             redeem_script,
             script_pub_key,
             sequence,
@@ -131,7 +131,7 @@ pub mod transactions {
         let mut output_vec = vec![];
 
         let address = BitcoinAddress::<N>::from_str(output.address).unwrap();
-        let tx_output = BitcoinTransactionOutput::new(&address, output.amount).unwrap();
+        let tx_output = BitcoinTransactionOutput::new(&address, BitcoinAmount(output.amount)).unwrap();
         output_vec.push(tx_output);
 
         let parameters = BitcoinTransactionParameters::<N> {
@@ -181,7 +181,7 @@ pub mod transactions {
                 address,
                 transaction_id,
                 input.index,
-                input.utxo_amount,
+                Some(ZcashAmount(input.utxo_amount.unwrap())),
                 redeem_script,
                 script_pub_key,
                 sequence,
@@ -191,7 +191,7 @@ pub mod transactions {
         let output_address = ZcashAddress::<N>::from_str(output.address).unwrap();
         let output_amount =  output.amount; // in taz
         transaction.parameters = transaction.parameters.add_transparent_output(&output_address,
-                                                                               output_amount).unwrap();
+                                                                               ZcashAmount(output_amount)).unwrap();
 
         // let's sign the transaction
         //transaction = transaction.sign_raw_transaction(private_key.clone(), 0).unwrap();
